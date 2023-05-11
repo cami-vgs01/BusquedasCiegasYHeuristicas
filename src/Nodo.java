@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Nodo {
+public class Nodo implements Comparable<Nodo>{
     private String nombre;
     private int pesoNodo;
     private ArrayList<Conexion> conexiones;
@@ -33,5 +33,15 @@ public class Nodo {
     public void agregarConexion(Conexion conexion) {
         conexiones.add(conexion);
     }
+
+    @Override
+    public int compareTo(Nodo o) {
+        return Integer.compare(this.getPesoNodo(), o.getPesoNodo());
+    }
+
+    /*@Override
+    public int compareTo(Nodo otro) {
+        return this.getNombre().compareTo(otro.getNombre());
+    }*/
 }
 

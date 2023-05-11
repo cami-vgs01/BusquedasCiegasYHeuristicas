@@ -421,7 +421,7 @@ public class Grafo {
         System.out.println("La complejidad espacial es O(" + factorRamificacion() + "^(" + damePeso + "/"+minimo+")) = "+ Math.pow(factorRamificacion(), damePeso/minimo));
         return camino; // devolver la lista de nodos visitados
     }
-    public void ascensoColina(String origen, String destino) {
+    /*public void ascensoColina(String origen, String destino) {
         ArrayList<Nodo> visitados = new ArrayList<>();
         ArrayList<Nodo> recorrido = new ArrayList<>();
         Nodo nodoActual = buscarNodo(origen);
@@ -471,7 +471,7 @@ public class Grafo {
         System.out.println();
         System.out.println("La complejidad computacional es O(" + getNodos().size() + "*" + maxHijos + ") = "+ (getNodos().size()*maxHijos));
         System.out.println("La complejidad espacial es O(1)");
-    }
+    }*/
     public void primeroElMejor(String origen, String destino) {
         Nodo nodoOrigen = buscarNodo(origen);
         Nodo nodoDestino = buscarNodo(destino);
@@ -633,5 +633,89 @@ public class Grafo {
         System.out.println();
         System.out.println("La complejidad computacional es O(" + factorRamificacion() + "^" + limite + ") = "+ Math.pow(factorRamificacion(), limite));
         System.out.println("La complejidad espacial es O(" + factorRamificacion() + "^" + limite + ") = "+ Math.pow(factorRamificacion(), limite));
+    }
+    //CAMBIO QUE PIDIO PARA EL INTERCICLO DEL ASCENSO A LA COLINA
+    public void ascensoColina(String origen, String destino) {
+        ArrayList<Nodo> visitados = new ArrayList<>();
+        ArrayList<Nodo> recorrido = new ArrayList<>();
+        Nodo nodoActual = buscarNodo(origen);
+        Nodo nodoDestino = buscarNodo(destino);
+        Nodo mejorNodo = null;
+        visitados.add(nodoActual);
+        recorrido.add(nodoActual);
+        int maxHijos = 0;
+        while (!recorrido.isEmpty()) {
+            for (Nodo nodo : recorrido) {
+                System.out.print(nodo.getNombre() + "(" + nodo.getPesoNodo() + ") ");
+            }
+            System.out.println();
+            if (nodoActual.equals(nodoDestino)) {
+                System.out.println("Se encontró el destino");
+                break;
+            }
+            mejorNodo = null;
+            double totalPesoHijos = 0;
+            int numHijos = nodoActual.getConexiones().size();
+            for (Conexion conexion : nodoActual.getConexiones()) {
+                totalPesoHijos += conexion.getDestino().getPesoNodo();
+            }
+            double promedioPesoHijos = totalPesoHijos / numHijos;
+            double menorDiferencia = Double.MAX_VALUE;
+            List<Double> dif = new ArrayList<>();
+            for (Conexion conexion : nodoActual.getConexiones()) {
+                Nodo hijo = conexion.getDestino();
+                for(Conexion conexion1: hijo.getConexiones()){
+                    int pesoHijo = conexion1.getDestino().getPesoNodo();
+                    double diferencia = Math.abs(promedioPesoHijos - pesoHijo);
+                    dif.add(diferencia);
+                    if (diferencia < menorDiferencia) {
+                        menorDiferencia = diferencia;
+                        mejorNodo = conexion.getDestino();
+                    }
+                }
+                if(hijo.getConexiones().size()==0){
+                    promedioPesoHijos=0;
+                    int pesoHijo = conexion.getDestino().getPesoNodo();
+                    double diferencia = Math.abs(promedioPesoHijos - pesoHijo);
+                    if (diferencia < menorDiferencia) {
+                        menorDiferencia = diferencia;
+                        mejorNodo = conexion.getDestino();
+                    }
+                }
+            }
+
+            /*double min =Collections.min(dif);
+            List<Nodo> hijo = new ArrayList<>();
+            for (int i = 0; i < dif.size(); i++) {
+                if (dif.get(i)==min){
+                    Nodo dest = nodoActual.getConexiones().get(i).getDestino();
+                    hijo.add(dest);
+                }
+            }
+            if (hijo.size() > 1) {
+                // Si hay varios hijos con la misma distancia al promedio, seleccionamos el que tenga el nombre más bajo
+                Collections.sort(hijo, (nodo1, nodo2) -> nodo1.getNombre().compareTo(nodo2.getNombre()));
+                mejorNodo = hijo.get(0);
+            }*/
+            if (!visitados.contains(mejorNodo)) {
+                visitados.add(mejorNodo);
+            }
+            recorrido.remove(nodoActual);
+            recorrido.add(mejorNodo);
+            ArrayList<Conexion> con = new ArrayList<>(mejorNodo.getConexiones());
+            for (Conexion nodo : con) {
+                int cantHijos = nodo.getDestino().getConexiones().size();
+                if (cantHijos > maxHijos) {
+                    maxHijos = cantHijos;
+                }
+            }
+            nodoActual = mejorNodo;
+        }
+        for (Nodo nodo : visitados){
+            System.out.print(nodo.getNombre()+ " ");
+        }
+        System.out.println();
+        System.out.println("La complejidad computacional es O(" + getNodos().size() + "*" + maxHijos + ") = "+ (getNodos().size()*maxHijos));
+        System.out.println("La complejidad espacial es O(1)");
     }
 }
