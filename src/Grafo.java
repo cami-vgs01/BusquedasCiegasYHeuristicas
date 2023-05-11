@@ -661,13 +661,11 @@ public class Grafo {
             }
             double promedioPesoHijos = totalPesoHijos / numHijos;
             double menorDiferencia = Double.MAX_VALUE;
-            List<Double> dif = new ArrayList<>();
             for (Conexion conexion : nodoActual.getConexiones()) {
                 Nodo hijo = conexion.getDestino();
                 for(Conexion conexion1: hijo.getConexiones()){
                     int pesoHijo = conexion1.getDestino().getPesoNodo();
                     double diferencia = Math.abs(promedioPesoHijos - pesoHijo);
-                    dif.add(diferencia);
                     if (diferencia < menorDiferencia) {
                         menorDiferencia = diferencia;
                         mejorNodo = conexion.getDestino();
@@ -683,20 +681,6 @@ public class Grafo {
                     }
                 }
             }
-
-            /*double min =Collections.min(dif);
-            List<Nodo> hijo = new ArrayList<>();
-            for (int i = 0; i < dif.size(); i++) {
-                if (dif.get(i)==min){
-                    Nodo dest = nodoActual.getConexiones().get(i).getDestino();
-                    hijo.add(dest);
-                }
-            }
-            if (hijo.size() > 1) {
-                // Si hay varios hijos con la misma distancia al promedio, seleccionamos el que tenga el nombre más bajo
-                Collections.sort(hijo, (nodo1, nodo2) -> nodo1.getNombre().compareTo(nodo2.getNombre()));
-                mejorNodo = hijo.get(0);
-            }*/
             if (!visitados.contains(mejorNodo)) {
                 visitados.add(mejorNodo);
             }
